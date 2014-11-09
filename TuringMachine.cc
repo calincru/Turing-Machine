@@ -41,7 +41,7 @@ private:
     }
 };
 
-class KeyNotFound: public std::exception
+class KeyNotFound : public std::exception
 {
 private:
     virtual const char *what() const throw()
@@ -89,7 +89,6 @@ public:
     TMConfiguration()
         : statesNr_(0)
     {
-
     }
 
     void addTransition(int state_in, char sym_in, int state_af,
@@ -126,6 +125,14 @@ private:
         gamma_.emplace(k, v);
     }
 
+    // Maybe optimize a little bit for rvalue refs? E.g. the call from the
+    // public method with the same name.
+    void addTransition(TMTransition::key_type &&k,
+                       TMTransition::value_type &&v)
+    {
+        gamma_.emplace(k, v);
+    }
+
     TMTransition gamma_;
     int statesNr_;
 };
@@ -149,7 +156,8 @@ public:
 #endif
 
             int curr_sym = static_cast<int>(tape[tape_head]);
-            TMTransition::value_type val = conf_.getValue(current_state, curr_sym);
+            TMTransition::value_type val = conf_.getValue(current_state,
+                                                          curr_sym);
 
             tape[tape_head] = std::get<1>(val);
             tape_head += std::get<2>(val);
@@ -163,7 +171,8 @@ public:
     }
 
 private:
-    void print(int current_state, int tape_head, const std::string &current_tape)
+    void print(int current_state, int tape_head,
+               const std::string &current_tape)
     {
         std::string head_str(current_tape.size(), ' ');
         head_str[tape_head] = '^';
@@ -209,7 +218,8 @@ public:
 
         auto inouts = getInOuts();
         for (auto it = inouts.cbegin(); it != inouts.cend(); ++it)
-            TEST_OUTPUT(it - inouts.cbegin() + 1, it->second, tm_runtime->run(it->first))
+            TEST_OUTPUT(it - inouts.cbegin() + 1, it->second,
+                        tm_runtime->run(it->first))
 
         std::cout << std::endl;
         delete tm_runtime;
@@ -288,28 +298,83 @@ private:
 // TODO
 class MatrixTest : public ::unittest::UnitTest
 {
+    const char *name() override
+    {
+        return "MatrixTest";
+    }
 
+    void init() override
+    {
+        // TODO
+    }
+
+    std::vector<std::pair<std::string, std::string>> getInOuts() override
+    {
+        std::vector<std::pair<std::string, std::string>> ret;
+        // TODO
+
+        return ret;
+    }
 };
 
 // TODO
 class AnagramsTest : public ::unittest::UnitTest
 {
+    const char *name() override
+    {
+        return "AnagramsTest";
+    }
 
+    void init() override
+    {
+        // TODO
+    }
+
+    std::vector<std::pair<std::string, std::string>> getInOuts() override
+    {
+        std::vector<std::pair<std::string, std::string>> ret;
+        // TODO
+
+        return ret;
+    }
 };
 
 // TODO
 class CountZerosTest : public ::unittest::UnitTest
 {
+    const char *name() override
+    {
+        return "CountZerosTest";
+    }
 
+    void init() override
+    {
+        // TODO
+    }
+
+    std::vector<std::pair<std::string, std::string>> getInOuts() override
+    {
+        std::vector<std::pair<std::string, std::string>> ret;
+        // TODO
+
+        return ret;
+    }
 };
+
 
 int main()
 {
     unittest::UnitTest *test1 = new IncrementTest();
     unittest::UnitTest *test2 = new PalindromeTest();
+    unittest::UnitTest *test3 = new MatrixTest();
+    unittest::UnitTest *test4 = new AnagramsTest();
+    unittest::UnitTest *test5 = new CountZerosTest();
 
     test1->runTest();
     test2->runTest();
+    test3->runTest();
+    test4->runTest();
+    test5->runTest();
 
     return 0;
 }
