@@ -203,7 +203,7 @@ public:
     void runTest()
     {
         init();
-        TMRuntime *tm_runtime = new TMRuntime(tm_conf);
+        TMRuntime *tm_runtime = new TMRuntime(tmConf_);
 
         auto inouts = getInOuts();
         for (auto it = inouts.cbegin(); it != inouts.cend(); ++it) {
@@ -218,7 +218,7 @@ public:
     }
 
 protected:
-    TMConfiguration tm_conf;
+    TMConfiguration tmConf_;
 
 private:
     virtual std::vector<std::pair<std::string, std::string>> getInOuts() = 0;
@@ -234,20 +234,21 @@ private:
 using namespace TM;
 
 
-class PalindromeTest : public ::unittest::UnitTest
+class IncrementTest : public ::unittest::UnitTest
 {
 public:
     void init()
     {
-        tm_conf.addTransition(0, '0', 0, '0', TM::RIGHT);
-        tm_conf.addTransition(0, '1', 0, '1', RIGHT);
-        tm_conf.addTransition(0, '#', 1, '#', LEFT);
-        tm_conf.addTransition(1, '0', 2, '1', LEFT);
-        tm_conf.addTransition(1, '1', 1, '0', LEFT);
-        tm_conf.addTransition(2, '0', 2, '0', LEFT);
-        tm_conf.addTransition(2, '1', 2, '1', LEFT);
-        tm_conf.addTransition(2, '>', 3, '>', HOLD);
+        tmConf_.addTransition(0, '0', 0, '0', RIGHT);
+        tmConf_.addTransition(0, '1', 0, '1', RIGHT);
+        tmConf_.addTransition(0, '#', 1, '#', LEFT);
+        tmConf_.addTransition(1, '0', 2, '1', LEFT);
+        tmConf_.addTransition(1, '1', 1, '0', LEFT);
+        tmConf_.addTransition(2, '0', 2, '0', LEFT);
+        tmConf_.addTransition(2, '1', 2, '1', LEFT);
+        tmConf_.addTransition(2, '>', 3, '>', HOLD);
     }
+
 private:
     std::vector<std::pair<std::string, std::string>> getInOuts()
     {
@@ -261,7 +262,7 @@ private:
 
 int main()
 {
-    ::unittest::UnitTest *test = new PalindromeTest();
+    unittest::UnitTest *test = new IncrementTest();
     test->runTest();
 
     return 0;
