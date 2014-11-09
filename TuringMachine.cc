@@ -125,14 +125,6 @@ private:
         delta_.emplace(k, v);
     }
 
-    // Maybe optimize a little bit for rvalue refs? E.g. the call from the
-    // public method with the same name.
-    void addTransition(TMTransition::key_type &&k,
-                       TMTransition::value_type &&v)
-    {
-        delta_.emplace(k, v);
-    }
-
     TMTransition delta_;
     int statesNr_;
 };
