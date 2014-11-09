@@ -273,17 +273,34 @@ private:
 
     void init() override
     {
-
+        // TODO
     }
 
     std::vector<std::pair<std::string, std::string>> getInOuts() override
     {
         std::vector<std::pair<std::string, std::string>> ret;
-        ret.emplace_back(">0001#", ">0010#");
-        ret.emplace_back(">00010#", ">00011#");
+        // TODO
 
         return ret;
     }
+};
+
+// TODO
+class MatrixTest : public ::unittest::UnitTest
+{
+
+};
+
+// TODO
+class AnagramsTest : public ::unittest::UnitTest
+{
+
+};
+
+// TODO
+class CountZerosTest : public ::unittest::UnitTest
+{
+
 };
 
 int main()
