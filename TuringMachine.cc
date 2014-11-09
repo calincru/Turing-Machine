@@ -184,13 +184,15 @@ private:
 };
 
 
-#define TEST_SUCCEDED(testNr)\
-    std::cout << "Test " << testNr << " succeded" << std::endl
-#define TEST_FAILED(testNr, expected, actual)\
-    std::cout << "Test " << testNr << " failed:" << std::endl\
-              << "Expected: " << expected << std::endl\
-              << "Actual: " << actual << std::endl;
-
+#define TEST_OUTPUT(testNr, expected, actual)\
+{\
+    if (expected == actual)\
+        std::cout << "Test " << testNr << " succeded" << std::endl;\
+    else\
+        std::cout << "Test " << testNr << " failed: "\
+                  << "Expected: " << expected << "; "\
+                  << "Actual: " << actual << std::endl;\
+}
 
 namespace unittest
 {
@@ -198,29 +200,27 @@ namespace unittest
 class UnitTest
 {
 public:
-    virtual void init() = 0;
-
     void runTest()
     {
+        std::cout << "Running " << name() << std::endl;
+
         init();
         TMRuntime *tm_runtime = new TMRuntime(tmConf_);
 
         auto inouts = getInOuts();
-        for (auto it = inouts.cbegin(); it != inouts.cend(); ++it) {
-            std::string actual_out = tm_runtime->run(it->first);
-            if (actual_out != it->second) {
-                TEST_FAILED(it - inouts.cbegin() + 1, it->second, actual_out);
-            } else {
-                TEST_SUCCEDED(it - inouts.cbegin() + 1);
-            }
-            std::cout << std::endl;
-        }
+        for (auto it = inouts.cbegin(); it != inouts.cend(); ++it)
+            TEST_OUTPUT(it - inouts.cbegin() + 1, it->second, tm_runtime->run(it->first))
+
+        std::cout << std::endl;
+        delete tm_runtime;
     }
 
 protected:
     TMConfiguration tmConf_;
 
 private:
+    virtual void init() = 0;
+    virtual const char *name() = 0;
     virtual std::vector<std::pair<std::string, std::string>> getInOuts() = 0;
 };
 
@@ -236,8 +236,8 @@ using namespace TM;
 
 class IncrementTest : public ::unittest::UnitTest
 {
-public:
-    void init()
+private:
+    void init() override
     {
         tmConf_.addTransition(0, '0', 0, '0', RIGHT);
         tmConf_.addTransition(0, '1', 0, '1', RIGHT);
@@ -249,7 +249,34 @@ public:
         tmConf_.addTransition(2, '>', 3, '>', HOLD);
     }
 
+    const char *name() override
+    {
+        return "IncrementTest";
+    }
+
+    std::vector<std::pair<std::string, std::string>> getInOuts() override
+    {
+        std::vector<std::pair<std::string, std::string>> ret;
+        ret.emplace_back(">0001#", ">0010#");
+        ret.emplace_back(">00010#", ">00011#");
+
+        return ret;
+    }
+};
+
+class PalindromeTest : public ::unittest::UnitTest
+{
 private:
+    const char *name() override
+    {
+        return "PalindromeTest";
+    }
+
+    void init() override
+    {
+
+    }
+
     std::vector<std::pair<std::string, std::string>> getInOuts()
     {
         std::vector<std::pair<std::string, std::string>> ret;
@@ -262,8 +289,11 @@ private:
 
 int main()
 {
-    unittest::UnitTest *test = new IncrementTest();
-    test->runTest();
+    unittest::UnitTest *test1 = new IncrementTest();
+    unittest::UnitTest *test2 = new PalindromeTest();
+
+    test1->runTest();
+    test2->runTest();
 
     return 0;
 }
