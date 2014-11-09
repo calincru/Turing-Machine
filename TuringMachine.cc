@@ -219,8 +219,8 @@ protected:
     TMConfiguration tmConf_;
 
 private:
-    virtual void init() = 0;
     virtual const char *name() = 0;
+    virtual void init() = 0;
     virtual std::vector<std::pair<std::string, std::string>> getInOuts() = 0;
 };
 
@@ -233,10 +233,14 @@ private:
 
 using namespace TM;
 
-
 class IncrementTest : public ::unittest::UnitTest
 {
 private:
+    const char *name() override
+    {
+        return "IncrementTest";
+    }
+
     void init() override
     {
         tmConf_.addTransition(0, '0', 0, '0', RIGHT);
@@ -247,11 +251,6 @@ private:
         tmConf_.addTransition(2, '0', 2, '0', LEFT);
         tmConf_.addTransition(2, '1', 2, '1', LEFT);
         tmConf_.addTransition(2, '>', 3, '>', HOLD);
-    }
-
-    const char *name() override
-    {
-        return "IncrementTest";
     }
 
     std::vector<std::pair<std::string, std::string>> getInOuts() override
@@ -277,7 +276,7 @@ private:
 
     }
 
-    std::vector<std::pair<std::string, std::string>> getInOuts()
+    std::vector<std::pair<std::string, std::string>> getInOuts() override
     {
         std::vector<std::pair<std::string, std::string>> ret;
         ret.emplace_back(">0001#", ">0010#");
