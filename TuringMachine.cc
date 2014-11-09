@@ -59,27 +59,27 @@ public:
 
     void emplace(const key_type &k, const value_type &v) throw()
     {
-        if (gamma_.count(k))
+        if (delta_.count(k))
             throw new MultipleValuesMappedToKey();
 
-        gamma_.emplace(k, v);
+        delta_.emplace(k, v);
     }
 
     value_type get(const key_type &k) const
     {
-        if (!gamma_.count(k))
+        if (!delta_.count(k))
             throw new KeyNotFound();
 
-        return gamma_.find(k)->second;
+        return delta_.find(k)->second;
     }
 
     bool contains(const key_type &k) const
     {
-        return gamma_.count(k);
+        return delta_.count(k);
     }
 
 private:
-    std::unordered_map<key_type, value_type, tuple_hash> gamma_;
+    std::unordered_map<key_type, value_type, tuple_hash> delta_;
 };
 
 
@@ -110,19 +110,19 @@ public:
 
     bool is_undefined(int state, char sym) const
     {
-        return !gamma_.contains(std::make_tuple(state, sym));
+        return !delta_.contains(std::make_tuple(state, sym));
     }
 
     TMTransition::value_type getValue(int state, char sym) const
     {
-        return gamma_.get(std::make_tuple(state, sym));
+        return delta_.get(std::make_tuple(state, sym));
     }
 
 private:
     void addTransition(const TMTransition::key_type &k,
                        const TMTransition::value_type &v)
     {
-        gamma_.emplace(k, v);
+        delta_.emplace(k, v);
     }
 
     // Maybe optimize a little bit for rvalue refs? E.g. the call from the
@@ -130,10 +130,10 @@ private:
     void addTransition(TMTransition::key_type &&k,
                        TMTransition::value_type &&v)
     {
-        gamma_.emplace(k, v);
+        delta_.emplace(k, v);
     }
 
-    TMTransition gamma_;
+    TMTransition delta_;
     int statesNr_;
 };
 
