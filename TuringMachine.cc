@@ -65,6 +65,14 @@ public:
         delta_.emplace(k, v);
     }
 
+    void emplace(key_type &&k, value_type &&v) throw()
+    {
+        if (delta_.count(k))
+            throw new MultipleValuesMappedToKey();
+
+        delta_.emplace(std::move(k), std::move(v));
+    }
+
     value_type get(const key_type &k) const
     {
         if (!delta_.count(k))
@@ -124,6 +132,13 @@ private:
     {
         delta_.emplace(k, v);
     }
+
+    void addTransition(TMTransition::key_type &&k,
+                       TMTransition::value_type &&v)
+    {
+        delta_.emplace(std::move(k), std::move(v));
+    }
+
 
     TMTransition delta_;
     int statesNr_;
