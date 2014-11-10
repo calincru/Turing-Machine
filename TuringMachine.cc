@@ -178,6 +178,7 @@ public:
     }
 
 private:
+#ifdef VERBOSE
     void print(int current_state, int tape_head,
                const std::string &current_tape)
     {
@@ -195,10 +196,14 @@ private:
 
         std::cout << std::endl;
     }
+#endif
 
     TMConfiguration conf_;
 };
 
+
+namespace unittest
+{
 
 #define TEST_OUTPUT(testNr, expected, actual)\
 {\
@@ -209,9 +214,6 @@ private:
                   << "Expected: " << expected << "; "\
                   << "Actual: " << actual << std::endl;\
 }
-
-namespace unittest
-{
 
 class UnitTest
 {
