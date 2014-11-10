@@ -206,14 +206,15 @@ namespace unittest
 {
 
 #define TEST_OUTPUT(testNr, expected, actual)\
-{\
-    if (expected == actual)\
-        std::cout << "Test " << testNr << " succeded" << std::endl;\
-    else\
-        std::cout << "Test " << testNr << " failed: "\
-                  << "Expected: " << expected << "; "\
-                  << "Actual: " << actual << std::endl;\
-}
+    do {\
+        if (expected == actual)\
+            std::cout << "Test " << testNr << " succeded" << std::endl;\
+        else\
+            std::cout << "Test " << testNr << " failed: "\
+                      << "Expected: " << expected << "; "\
+                      << "Actual: " << actual << std::endl;\
+    } while (false)
+
 
 class UnitTest
 {
@@ -228,7 +229,7 @@ public:
         auto inouts = getInOuts();
         for (auto it = inouts.cbegin(); it != inouts.cend(); ++it)
             TEST_OUTPUT(it - inouts.cbegin() + 1, it->second,
-                        tm_runtime->run(it->first))
+                        tm_runtime->run(it->first));
 
         std::cout << std::endl;
         delete tm_runtime;
