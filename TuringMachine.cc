@@ -14,24 +14,6 @@ enum SHIFT {
     HOLD = 0
 };
 
-bool operator==(const std::tuple<int, char> &a,
-                const std::tuple<int, char> &b)
-{
-    return std::get<0>(a) == std::get<0>(b) &&
-           std::get<1>(a) == std::get<1>(b);
-}
-
-struct tuple_hash : public std::unary_function<std::tuple<int, char>,
-                                               std::size_t>
-{
-    const int MOD = 666013;
-
-    std::size_t operator()(const std::tuple<int, char> &k) const
-    {
-        return (std::get<0>(k) + std::get<1>(k)) % MOD;
-    }
-};
-
 class MultipleValuesMappedToKey : public std::exception
 {
 private:
@@ -47,6 +29,24 @@ private:
     virtual const char *what() const throw()
     {
         return "Key not found. Maybe first test using contains?";
+    }
+};
+
+bool operator==(const std::tuple<int, char> &a,
+                const std::tuple<int, char> &b)
+{
+    return std::get<0>(a) == std::get<0>(b) &&
+           std::get<1>(a) == std::get<1>(b);
+}
+
+struct tuple_hash : public std::unary_function<std::tuple<int, char>,
+                                               std::size_t>
+{
+    const int MOD = 666013;
+
+    std::size_t operator()(const std::tuple<int, char> &k) const
+    {
+        return (std::get<0>(k) + std::get<1>(k)) % MOD;
     }
 };
 
@@ -89,7 +89,6 @@ public:
 private:
     std::unordered_map<key_type, value_type, tuple_hash> delta_;
 };
-
 
 class TMConfiguration
 {
@@ -201,7 +200,6 @@ private:
     TMConfiguration conf_;
 };
 
-
 namespace unittest
 {
 
@@ -224,11 +222,11 @@ public:
         std::cout << "Running " << name() << std::endl;
 
         init();
+        addTestUnits();
         TMRuntime *tm_runtime = new TMRuntime(tmConf_);
 
-        auto inouts = getInOuts();
-        for (auto it = inouts.cbegin(); it != inouts.cend(); ++it)
-            TEST_OUTPUT(it - inouts.cbegin() + 1, it->second,
+        for (auto it = testCases_.cbegin(); it != testCases_.cend(); ++it)
+            TEST_OUTPUT(it - testCases_.cbegin() + 1, it->second,
                         tm_runtime->run(it->first));
 
         std::cout << std::endl;
@@ -237,75 +235,33 @@ public:
 
 protected:
     TMConfiguration tmConf_;
+    std::vector<std::pair<std::string, std::string>> testCases_;
 
 private:
     virtual const char *name() = 0;
     virtual void init() = 0;
-    virtual std::vector<std::pair<std::string, std::string>> getInOuts() = 0;
+    virtual void addTestUnits() = 0;
 };
 
-}
+#define ADD_TRANSITION(state_in, sym_in, state_after, sym_after, shift)\
+    do {\
+        tmConf_.addTransition(state_in, sym_in, state_after, sym_after, shift);\
+    } while (false)
 
-}
+#define ADD_TEST_UNIT(input, expected_output)\
+    do {\
+        testCases_.emplace_back(input, expected_output);\
+    } while (false)
+
+} // namespace TM::unittest
+
+} // namespace TM
 
 
 
 
 using namespace TM;
 
-class IncrementTest : public ::unittest::UnitTest
-{
-private:
-    const char *name() override
-    {
-        return "IncrementTest";
-    }
-
-    void init() override
-    {
-        tmConf_.addTransition(0, '0', 0, '0', RIGHT);
-        tmConf_.addTransition(0, '1', 0, '1', RIGHT);
-        tmConf_.addTransition(0, '#', 1, '#', LEFT);
-        tmConf_.addTransition(1, '0', 2, '1', LEFT);
-        tmConf_.addTransition(1, '1', 1, '0', LEFT);
-        tmConf_.addTransition(2, '0', 2, '0', LEFT);
-        tmConf_.addTransition(2, '1', 2, '1', LEFT);
-        tmConf_.addTransition(2, '>', 3, '>', HOLD);
-    }
-
-    std::vector<std::pair<std::string, std::string>> getInOuts() override
-    {
-        std::vector<std::pair<std::string, std::string>> ret;
-        ret.emplace_back(">0001#", ">0010#");
-        ret.emplace_back(">00010#", ">00011#");
-
-        return ret;
-    }
-};
-
-class PalindromeTest : public ::unittest::UnitTest
-{
-private:
-    const char *name() override
-    {
-        return "PalindromeTest";
-    }
-
-    void init() override
-    {
-        // TODO
-    }
-
-    std::vector<std::pair<std::string, std::string>> getInOuts() override
-    {
-        std::vector<std::pair<std::string, std::string>> ret;
-        // TODO
-
-        return ret;
-    }
-};
-
-// TODO
 class MatrixTest : public ::unittest::UnitTest
 {
     const char *name() override
@@ -318,16 +274,17 @@ class MatrixTest : public ::unittest::UnitTest
         // TODO
     }
 
-    std::vector<std::pair<std::string, std::string>> getInOuts() override
+    void addTestUnits() override
     {
-        std::vector<std::pair<std::string, std::string>> ret;
-        // TODO
-
-        return ret;
+        ADD_TEST_UNIT(">1100101001110010#", "1#################");
+        ADD_TEST_UNIT(">0000000000000000#", "0#################");
+        ADD_TEST_UNIT(">1100101001110010#", "1#################");
+        ADD_TEST_UNIT(">0000000000000000#", "0#################");
+        ADD_TEST_UNIT(">0000000000010000#", "1#################");
+        ADD_TEST_UNIT(">1100101001100010#", "0#################");
     }
 };
 
-// TODO
 class AnagramsTest : public ::unittest::UnitTest
 {
     const char *name() override
@@ -340,16 +297,19 @@ class AnagramsTest : public ::unittest::UnitTest
         // TODO
     }
 
-    std::vector<std::pair<std::string, std::string>> getInOuts() override
+    void addTestUnits() override
     {
-        std::vector<std::pair<std::string, std::string>> ret;
-        // TODO
-
-        return ret;
+        ADD_TEST_UNIT(">10101_10011#", "1############");
+        ADD_TEST_UNIT(">1101_10011#", "0###########");
+        ADD_TEST_UNIT(">10101_1001100#", "0##############");
+        ADD_TEST_UNIT(">_1001100#", "0#########");
+        ADD_TEST_UNIT(">10101_#", "0#######");
+        ADD_TEST_UNIT(">11111_11111#", "1############");
+        ADD_TEST_UNIT(">00000_00000#", "1############");
+        ADD_TEST_UNIT(">_#", "1##");
     }
 };
 
-// TODO
 class CountZerosTest : public ::unittest::UnitTest
 {
     const char *name() override
@@ -362,29 +322,24 @@ class CountZerosTest : public ::unittest::UnitTest
         // TODO
     }
 
-    std::vector<std::pair<std::string, std::string>> getInOuts() override
+    void addTestUnits() override
     {
-        std::vector<std::pair<std::string, std::string>> ret;
-        // TODO
-
-        return ret;
+        ADD_TEST_UNIT(">10010#", "####11#");
+        ADD_TEST_UNIT(">1001011#", "######11#");
+        ADD_TEST_UNIT(">1111111#", "########0");
     }
 };
 
 
 int main()
 {
-    unittest::UnitTest *test1 = new IncrementTest();
-    unittest::UnitTest *test2 = new PalindromeTest();
-    unittest::UnitTest *test3 = new MatrixTest();
-    unittest::UnitTest *test4 = new AnagramsTest();
-    unittest::UnitTest *test5 = new CountZerosTest();
+    unittest::UnitTest *test1 = new MatrixTest();
+    unittest::UnitTest *test2 = new AnagramsTest();
+    unittest::UnitTest *test3 = new CountZerosTest();
 
     test1->runTest();
     test2->runTest();
     test3->runTest();
-    test4->runTest();
-    test5->runTest();
 
     return 0;
 }
