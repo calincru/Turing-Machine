@@ -222,7 +222,7 @@ public:
         std::cout << "Running " << name() << std::endl;
 
         init();
-        addTestUnits();
+        addUnitTests();
         TMRuntime *tm_runtime = new TMRuntime(tmConf_);
 
         for (auto it = testCases_.cbegin(); it != testCases_.cend(); ++it)
@@ -240,7 +240,7 @@ protected:
 private:
     virtual const char *name() = 0;
     virtual void init() = 0;
-    virtual void addTestUnits() = 0;
+    virtual void addUnitTests() = 0;
 };
 
 #define ADD_TRANSITION(state_in, sym_in, state_after, sym_after, shift)\
@@ -248,7 +248,7 @@ private:
         tmConf_.addTransition(state_in, sym_in, state_after, sym_after, shift);\
     } while (false)
 
-#define ADD_TEST_UNIT(input, expected_output)\
+#define ADD_UNIT_TEST(input, expected_output)\
     do {\
         testCases_.emplace_back(input, expected_output);\
     } while (false)
@@ -274,14 +274,14 @@ class MatrixTest : public ::unittest::UnitTest
         // TODO
     }
 
-    void addTestUnits() override
+    void addUnitTests() override
     {
-        ADD_TEST_UNIT(">1100101001110010#", "1#################");
-        ADD_TEST_UNIT(">0000000000000000#", "0#################");
-        ADD_TEST_UNIT(">1100101001110010#", "1#################");
-        ADD_TEST_UNIT(">0000000000000000#", "0#################");
-        ADD_TEST_UNIT(">0000000000010000#", "1#################");
-        ADD_TEST_UNIT(">1100101001100010#", "0#################");
+        ADD_UNIT_TEST(">1100101001110010#", "1#################");
+        ADD_UNIT_TEST(">0000000000000000#", "0#################");
+        ADD_UNIT_TEST(">1100101001110010#", "1#################");
+        ADD_UNIT_TEST(">0000000000000000#", "0#################");
+        ADD_UNIT_TEST(">0000000000010000#", "1#################");
+        ADD_UNIT_TEST(">1100101001100010#", "0#################");
     }
 };
 
@@ -297,16 +297,16 @@ class AnagramsTest : public ::unittest::UnitTest
         // TODO
     }
 
-    void addTestUnits() override
+    void addUnitTests() override
     {
-        ADD_TEST_UNIT(">10101_10011#", "1############");
-        ADD_TEST_UNIT(">1101_10011#", "0###########");
-        ADD_TEST_UNIT(">10101_1001100#", "0##############");
-        ADD_TEST_UNIT(">_1001100#", "0#########");
-        ADD_TEST_UNIT(">10101_#", "0#######");
-        ADD_TEST_UNIT(">11111_11111#", "1############");
-        ADD_TEST_UNIT(">00000_00000#", "1############");
-        ADD_TEST_UNIT(">_#", "1##");
+        ADD_UNIT_TEST(">10101_10011#", "1############");
+        ADD_UNIT_TEST(">1101_10011#", "0###########");
+        ADD_UNIT_TEST(">10101_1001100#", "0##############");
+        ADD_UNIT_TEST(">_1001100#", "0#########");
+        ADD_UNIT_TEST(">10101_#", "0#######");
+        ADD_UNIT_TEST(">11111_11111#", "1############");
+        ADD_UNIT_TEST(">00000_00000#", "1############");
+        ADD_UNIT_TEST(">_#", "1##");
     }
 };
 
@@ -322,11 +322,11 @@ class CountZerosTest : public ::unittest::UnitTest
         // TODO
     }
 
-    void addTestUnits() override
+    void addUnitTests() override
     {
-        ADD_TEST_UNIT(">10010#", "####11#");
-        ADD_TEST_UNIT(">1001011#", "######11#");
-        ADD_TEST_UNIT(">1111111#", "########0");
+        ADD_UNIT_TEST(">10010#", "####11#");
+        ADD_UNIT_TEST(">1001011#", "######11#");
+        ADD_UNIT_TEST(">1111111#", "########0");
     }
 };
 
