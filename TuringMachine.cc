@@ -17,7 +17,7 @@ enum SHIFT {
 class MultipleValuesMappedToKey : public std::exception
 {
 private:
-    virtual const char *what() const throw()
+    virtual const char *what() const noexcept
     {
         return "Cannot map multiple values to a key in an unordered_map";
     }
@@ -26,7 +26,7 @@ private:
 class KeyNotFound : public std::exception
 {
 private:
-    virtual const char *what() const throw()
+    virtual const char *what() const noexcept
     {
         return "Key not found. Maybe first test using contains?";
     }
@@ -39,10 +39,9 @@ bool operator==(const std::tuple<int, char> &a,
            std::get<1>(a) == std::get<1>(b);
 }
 
-struct tuple_hash : public std::unary_function<std::tuple<int, char>,
-                                               std::size_t>
+struct tuple_hash
 {
-    const int MOD = 666013;
+    static const int MOD = 666013;
 
     std::size_t operator()(const std::tuple<int, char> &k) const
     {
@@ -57,7 +56,7 @@ public:
     typedef std::tuple<int, char, SHIFT> value_type;
 
 
-    void emplace(const key_type &k, const value_type &v) throw()
+    void emplace(const key_type &k, const value_type &v) noexcept
     {
         if (delta_.count(k))
             throw new MultipleValuesMappedToKey();
@@ -65,7 +64,7 @@ public:
         delta_.emplace(k, v);
     }
 
-    void emplace(key_type &&k, value_type &&v) throw()
+    void emplace(key_type &&k, value_type &&v) noexcept
     {
         if (delta_.count(k))
             throw new MultipleValuesMappedToKey();
@@ -99,7 +98,7 @@ public:
     }
 
     void addTransition(int state_in, char sym_in, int state_af,
-                       char sym_af, SHIFT shift ) throw()
+                       char sym_af, SHIFT shift ) noexcept
     {
         addTransition(std::make_tuple(state_in, sym_in),
                       std::make_tuple(state_af, sym_af, shift));
@@ -151,19 +150,18 @@ public:
     {
     }
 
-    std::string run(std::string tape) throw()
+    std::string run(std::string tape) noexcept
     {
-        int tape_head = 1;
-        int current_state = 0;
+        auto tape_head = 1;
+        auto current_state = 0;
 
         while (!conf_.is_final(current_state)) {
 #ifdef VERBOSE
             print(current_state, tape_head, tape);
 #endif
 
-            int curr_sym = static_cast<int>(tape[tape_head]);
-            TMTransition::value_type val = conf_.getValue(current_state,
-                                                          curr_sym);
+            auto curr_sym = static_cast<int>(tape[tape_head]);
+            auto val = conf_.getValue(current_state, curr_sym);
 
             tape[tape_head] = std::get<1>(val);
             tape_head += std::get<2>(val);
@@ -223,7 +221,7 @@ public:
 
         init();
         addUnitTests();
-        TMRuntime *tm_runtime = new TMRuntime(tmConf_);
+        auto *tm_runtime = new TMRuntime(tmConf_);
 
         for (auto it = testCases_.cbegin(); it != testCases_.cend(); ++it)
             TEST_OUTPUT(it - testCases_.cbegin() + 1, it->second,
@@ -329,7 +327,6 @@ class CountZerosTest : public ::unittest::UnitTest
         ADD_UNIT_TEST(">1111111#", "########0");
     }
 };
-
 
 int main()
 {
