@@ -38,7 +38,7 @@
         ); \
     } while (false)
 
-#define ADD_UNIT_TEST(input, expected_output) \
+#define EXPECTED_TAPE_ON(input, expected_output) \
     do { \
         d_tests.emplace_back(input, expected_output); \
     } while (false)

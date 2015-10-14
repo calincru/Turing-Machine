@@ -24,11 +24,11 @@ class increment final: public tm_abstract_problem {
     }
 
     void add_units() override {
-        ADD_UNIT_TEST(">0100#", ">0101#");
-        ADD_UNIT_TEST(">0000#", ">0001#");
-        ADD_UNIT_TEST(">0001#", ">0010#");
-        ADD_UNIT_TEST(">0101#", ">0110#");
-        ADD_UNIT_TEST(">1111#", ">0000#");
+        EXPECTED_TAPE_ON(">0100#", ">0101#");
+        EXPECTED_TAPE_ON(">0000#", ">0001#");
+        EXPECTED_TAPE_ON(">0001#", ">0010#");
+        EXPECTED_TAPE_ON(">0101#", ">0110#");
+        EXPECTED_TAPE_ON(">1111#", ">0000#");
     }
 };
 

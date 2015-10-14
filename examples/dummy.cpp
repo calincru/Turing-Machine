@@ -18,9 +18,9 @@ class do_nothing final: public tm_abstract_problem {
     }
 
     void add_units() override {
-        ADD_UNIT_TEST(">#01#", ">#01#");
-        ADD_UNIT_TEST(">", ">");
-        ADD_UNIT_TEST(">9$1#", ">9$1#");
+        EXPECTED_TAPE_ON(">#01#", ">#01#");
+        EXPECTED_TAPE_ON(">", ">");
+        EXPECTED_TAPE_ON(">9$1#", ">9$1#");
     }
 };
 
@@ -36,7 +36,7 @@ class dummy final: public tm_abstract_problem {
     }
 
     void add_units() override {
-        ADD_UNIT_TEST(">#01#", ">001#");
+        EXPECTED_TAPE_ON(">#01#", ">001#");
     }
 };
 
