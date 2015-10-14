@@ -9,11 +9,8 @@
 // C++ headers
 #include <iostream>
 #include <unordered_map>
-#include <tuple>
-#include <exception>
 #include <vector>
 #include <string>
-#include <memory>
 #include <algorithm>
 
 // C headers
