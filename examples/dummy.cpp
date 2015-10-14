@@ -31,6 +31,7 @@ class dummy final: public tm_abstract_problem {
     }
 
     void configure() override {
+        // Note that the last state is considered the final one.
         ADD_TRANSITION(0, '#', 1, '0', GO_RIGHT);
     }
 
