@@ -14,6 +14,8 @@ class increment final: public tm_abstract_problem {
     }
 
     void configure() override {
+        // Read: If we are in state 0 and we come across a '0', then we switch
+        // to state 0, we write '0' on the tape and GO to the RIGHT.
         ADD_TRANSITION(0, '0', 0, '0', GO_RIGHT);
         ADD_TRANSITION(0, '1', 0, '1', GO_RIGHT);
         ADD_TRANSITION(0, '#', 1, '#', GO_LEFT);
